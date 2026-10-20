@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SemanticSearch AI</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <nav class="nav">
+      <div class="nav-inner">
+        <div class="nav-brand">
+          <svg class="nav-logo" viewBox="0 0 32 32" fill="none">
+            <circle cx="14" cy="14" r="10" stroke="url(#ng)" stroke-width="2.5"/>
+            <line x1="21.5" y1="21.5" x2="28" y2="28" stroke="url(#ng)" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="14" cy="14" r="3" fill="url(#ng)"/>
+            <defs><linearGradient id="ng" x1="0" y1="0" x2="32" y2="32"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#6d28d9"/></linearGradient></defs>
+          </svg>
+          <span>SemanticSearch AI</span>
+        </div>
+        <div class="nav-links">
+          <a href="#search">Search</a>
+          <a href="#manage">Documents</a>
+          <a href="#architecture">Architecture</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-bg">
+        <div class="hero-orb orb-1"></div>
+        <div class="hero-orb orb-2"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          Sentence Transformers + Cosine Similarity
+        </div>
+        <h1 class="hero-title">
+          Semantic Search<br/>
+          <span class="gradient-text">Powered by AI Embeddings</span>
+        </h1>
+        <p class="hero-subtitle">
+          Go beyond keyword matching. This app understands meaning using vector embeddings and ranks documents by semantic similarity.
+        </p>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">384</span>
+            <span class="stat-label">Dimensions</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value" id="stat-docs">4</span>
+            <span class="stat-label">Documents</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">MiniLM</span>
+            <span class="stat-label">Model</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <section id="search" class="section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Semantic Search</h2>
+            <p>Results ranked by vector similarity, not keywords.</p>
+          </div>
+        </div>
+
+        <div class="search-panel">
+          <div class="search-bar">
+            <svg class="search-bar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="search-input" placeholder="e.g. How do I get my money back?" autocomplete="off" />
+            <button id="search-btn" class="btn btn-primary">Search</button>
+          </div>
+          <div class="search-meta" id="search-meta"></div>
+          <div id="search-results" class="results"></div>
+        </div>
+
+        <div class="suggestions">
+          <span class="suggestions-label">Try:</span>
+          <button class="chip" data-query="How long until I get my refund?">refund timing</button>
+          <button class="chip" data-query="Can I get my money back?">money back</button>
+          <button class="chip" data-query="What food do you serve?">food menu</button>
+          <button class="chip" data-query="When can I return something?">return policy</button>
+        </div>
+      </section>
+
+      <section id="manage" class="section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Document Manager</h2>
+            <p>Add, view, and remove documents from the index in real time.</p>
+          </div>
+        </div>
+
+        <div class="manage-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Add Documents</h3>
+              <span class="panel-badge">POST /documents</span>
+            </div>
+            <textarea id="doc-input" placeholder="One document per line...&#10;&#10;Example:&#10;Gift cards are valid for one year." rows="5"></textarea>
+            <div class="panel-actions">
+              <button id="add-docs-btn" class="btn btn-primary">Add to Index</button>
+              <button id="clear-docs-btn" class="btn btn-danger">Clear All</button>
+            </div>
+            <div id="doc-status" class="status-bar"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Indexed Documents <span class="count-badge" id="doc-count">4</span></h3>
+              <span class="panel-badge">GET /documents</span>
+            </div>
+            <div id="doc-list" class="doc-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div>
+            <h2>System Architecture</h2>
+            <p>Three-tier: Frontend -> Node API -> Python ML service.</p>
+          </div>
+        </div>
+
+        <div class="arch-flow">
+          <div class="arch-node">
+            <div class="arch-icon icon-frontend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="arch-info">
+              <span class="arch-port">:5173</span>
+              <h4>Frontend</h4>
+              <p>Vite + JavaScript</p>
+            </div>
+          </div>
+          <div class="arch-arrow">
+            <svg viewBox="0 0 60 24" fill="none"><line x1="0" y1="12" x2="46" y2="12" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 4"/><polygon points="46,6 56,12 46,18" fill="#a78bfa"/></svg>
+          </div>
+          <div class="arch-node">
+            <div class="arch-icon icon-backend">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="arch-info">
+              <span class="arch-port">:3000</span>
+              <h4>Node.js API</h4>
+              <p>Express Gateway</p>
+            </div>
+          </div>
+          <div class="arch-arrow">
+            <svg viewBox="0 0 60 24" fill="none"><line x1="0" y1="12" x2="46" y2="12" stroke="#a78bfa" stroke-width="2" stroke-dasharray="6 4"/><polygon points="46,6 56,12 46,18" fill="#a78bfa"/></svg>
+          </div>
+          <div class="arch-node">
+            <div class="arch-icon icon-ml">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <div class="arch-info">
+              <span class="arch-port">:8000</span>
+              <h4>FastAPI</h4>
+              <p>SentenceTransformer + sklearn</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipeline">
+          <h3>Search Pipeline</h3>
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Query Input</strong>
+                <p>User types a natural language query</p>
+              </div>
+            </div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Embedding</strong>
+                <p>all-MiniLM-L6-v2 converts text to 384-dim vector</p>
+              </div>
+            </div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Cosine Similarity</strong>
+                <p>sklearn computes angle between query and doc vectors</p>
+              </div>
+            </div>
+            <div class="pipeline-connector"></div>
+            <div class="pipeline-step">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <strong>Ranked Results</strong>
+                <p>Documents sorted by similarity score (0 to 1)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="stack" class="section">
+        <div class="section-header">
+          <div class="section-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Tech Stack</h2>
+            <p>Technologies used to build this application.</p>
+          </div>
+        </div>
+
+        <div class="stack-grid">
+          <div class="stack-card">
+            <div class="stack-icon">🐍</div>
+            <h4>Python</h4>
+            <p>Core ML service</p>
+            <div class="stack-tags"><span>FastAPI</span><span>Uvicorn</span></div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-icon">🧠</div>
+            <h4>SentenceTransformers</h4>
+            <p>Text embeddings</p>
+            <div class="stack-tags"><span>all-MiniLM-L6-v2</span></div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-icon">📐</div>
+            <h4>Scikit-learn</h4>
+            <p>Cosine similarity</p>
+            <div class="stack-tags"><span>sklearn</span><span>NumPy</span></div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-icon">🟢</div>
+            <h4>Node.js</h4>
+            <p>API gateway</p>
+            <div class="stack-tags"><span>Express</span></div>
+          </div>
+          <div class="stack-card">
+            <div class="stack-icon">⚡</div>
+            <h4>Vite</h4>
+            <p>Frontend build tool</p>
+            <div class="stack-tags"><span>Vanilla JS</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>SemanticSearch AI &mdash; Built to demonstrate vector embeddings &amp; semantic search</p>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
